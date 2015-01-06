@@ -64,10 +64,6 @@ guidance_content:
 """ % NAME
 
 
-def version():
-    print '0.1.1'
-
-
 def new_report(arg_date):
     calendar.setfirstweekday(calendar.MONDAY)
     if arg_date:
@@ -141,7 +137,7 @@ def deploy(arg_file):
 
 
 def main():
-    args = docopt(__doc__)
+    args = docopt(__doc__, version='0.1.1')
     if args['new_report']:
         new_report(args["--date"])
 
@@ -149,6 +145,3 @@ def main():
         files = deploy(args["--file"])
         ar = AutoRegister(ID, PASS, files)
         ar.auto_register()
-
-    elif args['--version']:
-        version()
