@@ -36,20 +36,36 @@ TEMPLATE = """# Weekly Report
 # name: %s
 
 activity_time: 
+# 0.0
+# 0.0
+# 0.0
+# 0.0
+# 0.0
+# 0.0
 activity_content:
+# day 1
 - 
+# day 2
 - 
+# day 3
+- 
+# day 4
+- 
+# day 5
+- 
+# day 6
+- 
+# day 7
 - 
 
 guidance_time: 
 guidance_content:
 - 
-- 
 """ % NAME
 
 
 def version():
-    print '0.1'
+    print '0.1.1'
 
 
 def new_report(arg_date):
@@ -98,7 +114,7 @@ def deploy(arg_file):
         if m.group(0) in repo.untracked_files or [diff for diff in repo.index.diff(None) if m.group(0) in str(diff)] != []:
             files = [m.group(0)]
             index.add(files)
-            index.commit(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S %Z"))
+            index.commit(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         else:
             print 'Info: Nothing to commit.'
             sys.exit(0)

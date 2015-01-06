@@ -6,7 +6,7 @@ from setuptools import setup, find_packages
 setup(
     name='ahkit',
     description='Active History of Research for K.I.T.',
-    version='0.1',
+    version='0.1.1',
     author='tknhs',
     packages=find_packages(),
     install_requires=['docopt', 'GitPython', 'PyYAML', 'selenium'],

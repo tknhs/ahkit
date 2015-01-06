@@ -28,8 +28,10 @@ class AutoRegister:
             yaml_file = open(f, 'r')
             data = yaml.load(yaml_file)
             for k, v in data.items():
-                if v == [None]:
-                    data[k] = ['']
+                if type(v) == list:
+                    # 重複削除 and None削除
+                    items = list(set([x for x in v if x != None]))
+                    data[k] = [''] if items == [] else items
                 elif v == None:
                     data[k] = ''
                 elif type(v) in [int, float]:
@@ -82,13 +84,13 @@ class AutoRegister:
             k_jikan.send_keys(data['activity_time'])
             k_naiyou = browser.find_element_by_xpath("//textarea[@name='k_naiyou']")
             k_naiyou.clear()
-            k_naiyou.send_keys('，'.join(data['activity_content']))
+            k_naiyou.send_keys(', '.join(data['activity_content']))
             s_jikan = browser.find_element_by_xpath("//input[@name='s_jikan']")
             s_jikan.clear()
             s_jikan.send_keys(data['guidance_time'])
             s_naiyou = browser.find_element_by_xpath("//textarea[@name='s_naiyou']")
             s_naiyou.clear()
-            s_naiyou.send_keys('，'.join(data['guidance_content']))
+            s_naiyou.send_keys(', '.join(data['guidance_content']))
 
             browser.find_element_by_xpath("//input[@value='　登　録　']").click()
             time.sleep(1)
