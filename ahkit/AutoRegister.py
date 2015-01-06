@@ -57,19 +57,22 @@ class AutoRegister:
         browser.switch_to_window("kougaku")
         assert "修士研究活動支援" in browser.title.encode('utf-8')
 
+        # 活動記録機能
+        browser.find_element_by_xpath("//a[@class='menubutton' and text()='活動記録機能']").click()
+
         for data in self.__parse_yaml():
-            # 活動記録機能
-            browser.find_element_by_xpath("//a[@class='menubutton' and text()='活動記録機能']").click()
             activity_histories = browser.find_elements_by_xpath("//td[@align='left']/a[@class='blue']")
             ah_date = {ah.text.encode('utf-8').split()[0].replace('/', ''): ah for ah in activity_histories}
             yyyymmdd = data['syear'] + data['smonth'] + data['sday']
             if yyyymmdd in ah_date.keys():
                 # 修正
+                stage = 'modify'
                 ah_date[yyyymmdd].click()
                 browser.find_element_by_xpath("//input[@value='　変　更　']").click()
 
             else:
                 # 新規登録
+                stage = 'new'
                 browser.find_element_by_xpath("//input[@value='活動記録の新規登録']").click()
                 browser.find_element_by_xpath("//input[@name='syear']").send_keys(data['syear'])
                 browser.find_element_by_xpath("//input[@name='smonth']").send_keys(data['smonth'])
@@ -93,4 +96,6 @@ class AutoRegister:
             s_naiyou.send_keys(', '.join(data['guidance_content']))
 
             browser.find_element_by_xpath("//input[@value='　登　録　']").click()
+            if stage == 'modify':
+                browser.find_element_by_xpath("//a[@class='return']").click()
             time.sleep(1)
