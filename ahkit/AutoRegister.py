@@ -1,15 +1,91 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import base64
+import getpass
+import os
+import sys
 import time
+
+from Crypto.Cipher import AES
 from selenium import webdriver
+import toml
 import yaml
 
 
+class AutoRegisterConfig:
+    def __init__(self):
+        setting_dir = os.path.join(os.environ['HOME'], '.config', 'ahkit')
+        is_dir = os.path.isdir(setting_dir)
+        if not is_dir:
+            os.makedirs(setting_dir)
+
+        self.setting_path = os.path.join(setting_dir, 'settings.toml')
+
+    def status(self):
+        '''Check the Configuration Status'''
+
+        return os.path.isfile(self.setting_path)
+
+    def load(self):
+        '''Load a Configuration File'''
+
+        f = open(self.setting_path, 'r')
+        setting_data = toml.loads(f.read())
+        f.close()
+        cipher = AES.new(base64.b64encode(setting_data['id']) + 'X' * (16 - len(base64.b64encode(setting_data['id']))))
+
+        self.uid = setting_data['id']
+        self.pw = cipher.decrypt(base64.b64decode(setting_data['pass'])).replace('X', '')
+        self.name = setting_data['name']
+        self.browser = setting_data['browser']
+
+    def save(self):
+        '''Save a Configuration File'''
+
+        print '*** Save a Configuration File ***'
+
+        s_id = raw_input('Input Student ID: ')
+        cipher = AES.new(base64.b64encode(s_id) + 'X' * (16 - len(base64.b64encode(s_id))))
+        s_pass = getpass.getpass('Input Password: ')
+        s_pass_confirm = getpass.getpass('Input Confirm Password: ')
+        if s_pass != s_pass_confirm:
+            print "Error: Password don't match."
+            sys.exit(0)
+        s_pass = base64.b64encode(cipher.encrypt(s_pass + 'X' * (16 - len(s_pass))))
+        s_name = raw_input('Input Name or Nickname: ')
+        s_browser = raw_input('Input Browser (Firefox: 0, Google Chome: 1): ')
+        s_browser = s_browser if s_browser == '1' else '0'
+
+        settings = '''################
+# Setting File #
+################
+
+# Student ID
+id = "%s"
+
+# Password
+pass = "%s"
+
+# Your name or nickname
+name = "%s"
+
+# Firefox: 0, Google Chrome: 1
+browser = "%s"
+''' % (s_id, s_pass, s_name, s_browser)
+        with open(self.setting_path, 'w') as f:
+            f.write(settings)
+
+        print 'Save a Configuration File to ' + self.setting_path + '\n'
+
+        self.load()
+
+
 class AutoRegister:
-    def __init__(self, uid, pw, files):
-        self.__id = uid
-        self.__pass = pw
+    def __init__(self, config, files):
+        self.__id = config.uid
+        self.__pass = config.pw
+        self.__browser = config.browser
         self.__files = files
 
     def __parse_yaml(self):
@@ -42,7 +118,11 @@ class AutoRegister:
             yield data
 
     def auto_register(self):
-        browser = webdriver.Firefox()
+        if self.__browser == '0':
+            browser = webdriver.Firefox()
+        else:
+            browser = webdriver.Chrome()
+
         browser.get('http://portal10.mars.kanazawa-it.ac.jp/portal/student')
         assert "金沢工業大学　学生ポータルサイト" in browser.title.encode('utf-8')
 

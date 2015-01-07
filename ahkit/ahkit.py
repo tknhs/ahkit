@@ -18,21 +18,21 @@ options:
                         デフォルト：コミットしていないすべてのファイル
 """
 
-from AutoRegister import AutoRegister
-from docopt import docopt
-from git import *
 import datetime
 import calendar
 import sys
 import os
 import re
 
+from AutoRegister import AutoRegister
+from AutoRegister import AutoRegisterConfig
 
-NAME = ''
-ID = ''
-PASS = ''
+from docopt import docopt
+from git import *
 
-TEMPLATE = """# Weekly Report
+
+def new_report(arg_date, name):
+    TEMPLATE = '''# Weekly Report
 # name: %s
 
 activity_time: 
@@ -61,10 +61,8 @@ activity_content:
 guidance_time: 
 guidance_content:
 - 
-""" % NAME
+''' % name
 
-
-def new_report(arg_date):
     calendar.setfirstweekday(calendar.MONDAY)
     if arg_date:
         d = datetime.datetime.strptime(arg_date, '%Y%m%d')
@@ -85,8 +83,8 @@ def new_report(arg_date):
     if os.path.isfile(filename):
         print 'Info: File already exists. : ' + filename
         sys.exit(0)
-    f = open(filename, 'w')
-    f.write(TEMPLATE)
+    with open(filename, 'w') as f:
+        f.write(TEMPLATE)
     print 'Info: Created a file. : ' + filename
 
 
@@ -138,10 +136,19 @@ def deploy(arg_file):
 
 def main():
     args = docopt(__doc__, version='0.1.1')
+
+    config = AutoRegisterConfig()
+    if config.status():
+        config.load()
+    else:
+        config.save()
+
     if args['new_report']:
-        new_report(args["--date"])
+        new_report(args["--date"], config.name)
 
     elif args['deploy']:
         files = deploy(args["--file"])
-        ar = AutoRegister(ID, PASS, files)
+        ar = AutoRegister(config, files)
         ar.auto_register()
+
+main()
