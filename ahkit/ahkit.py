@@ -129,7 +129,7 @@ def deploy(arg_file):
             sys.exit(0)
         else:
             index.add(files)
-            index.commit(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S %Z"))
+            index.commit(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
     return files
 
@@ -150,5 +150,3 @@ def main():
         files = deploy(args["--file"])
         ar = AutoRegister(config, files)
         ar.auto_register()
-
-main()
