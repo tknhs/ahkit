@@ -135,7 +135,7 @@ def deploy(arg_file):
 
 
 def main():
-    args = docopt(__doc__, version='0.1.1')
+    args = docopt(__doc__, version='0.2')
 
     config = AutoRegisterConfig()
     if config.status():

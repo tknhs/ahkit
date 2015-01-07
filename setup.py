@@ -6,10 +6,10 @@ from setuptools import setup, find_packages
 setup(
     name='ahkit',
     description='Active History of Research for K.I.T.',
-    version='0.1.1',
+    version='0.2',
     author='tknhs',
     packages=find_packages(),
-    install_requires=['docopt', 'GitPython', 'PyYAML', 'selenium'],
+    install_requires=['docopt', 'GitPython', 'pycrypto', 'PyYAML', 'selenium', 'toml'],
     entry_points={
         'console_scripts': 'ahkit = ahkit.ahkit:main'
     },
