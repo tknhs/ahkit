@@ -2,7 +2,11 @@
 Active History of Research for K.I.T.
 
 ## Requirements
-You need Python 2.7.
+- [Git](http://git-scm.com/)
+- [Python 2.7](https://www.python.org/)
+- [Firefox](https://www.mozilla.org/firefox/) or [Google Chrome](https://www.google.com/chrome/)
+
+Recommended browser is Firefox. If you use Google Chrome, install [ChromeDriver](https://code.google.com/p/selenium/wiki/ChromeDriver).
 
 ## Installation
 ```
